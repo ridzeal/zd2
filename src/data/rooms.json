@@ -1,0 +1,58 @@
+[
+  {
+    "id": "shop",
+    "name": "Item Shop",
+    "cost": 30,
+    "unlockLevel": 1,
+    "effect": { "type": "income", "value": 5 },
+    "color": "#4a9eff"
+  },
+  {
+    "id": "inn",
+    "name": "Inn",
+    "cost": 25,
+    "unlockLevel": 1,
+    "effect": { "type": "heal", "value": 2 },
+    "color": "#50c878"
+  },
+  {
+    "id": "smithy",
+    "name": "Smithy",
+    "cost": 50,
+    "unlockLevel": 1,
+    "effect": { "type": "stock", "value": 1 },
+    "color": "#ff6347"
+  },
+  {
+    "id": "arena",
+    "name": "Arena",
+    "cost": 40,
+    "unlockLevel": 1,
+    "effect": { "type": "attract", "value": 1 },
+    "color": "#ffd700"
+  },
+  {
+    "id": "entrance",
+    "name": "Dungeon Entrance",
+    "cost": 60,
+    "unlockLevel": 1,
+    "effect": { "type": "attract", "value": 2 },
+    "color": "#9b59b6"
+  },
+  {
+    "id": "library",
+    "name": "Library",
+    "cost": 80,
+    "unlockLevel": 3,
+    "effect": { "type": "income", "value": 8 },
+    "color": "#1abc9c"
+  },
+  {
+    "id": "temple",
+    "name": "Temple",
+    "cost": 100,
+    "unlockLevel": 5,
+    "effect": { "type": "heal", "value": 5 },
+    "color": "#e67e22"
+  }
+]

@@ -1,0 +1,5 @@
+{
+  "easy": { "gold": [10, 25], "items": ["health_potion", "wooden_sword"], "xp": 5 },
+  "medium": { "gold": [20, 50], "items": ["iron_armor", "magic_scroll"], "xp": 15 },
+  "hard": { "gold": [40, 100], "items": ["dragon_slayer", "arcane_robe"], "xp": 30 }
+}

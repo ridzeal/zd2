@@ -1,0 +1,50 @@
+[
+  {
+    "id": "warrior",
+    "name": "Warrior",
+    "baseStats": { "atk": 10, "def": 8, "hp": 30 },
+    "spawnWeight": 40,
+    "color": "#e74c3c",
+    "unlockLevel": 1
+  },
+  {
+    "id": "mage",
+    "name": "Mage",
+    "baseStats": { "atk": 14, "def": 3, "hp": 20 },
+    "spawnWeight": 25,
+    "color": "#3498db",
+    "unlockLevel": 1
+  },
+  {
+    "id": "thief",
+    "name": "Thief",
+    "baseStats": { "atk": 8, "def": 5, "hp": 25 },
+    "spawnWeight": 25,
+    "color": "#2ecc71",
+    "unlockLevel": 1
+  },
+  {
+    "id": "cleric",
+    "name": "Cleric",
+    "baseStats": { "atk": 6, "def": 6, "hp": 28 },
+    "spawnWeight": 10,
+    "color": "#f39c12",
+    "unlockLevel": 1
+  },
+  {
+    "id": "paladin",
+    "name": "Paladin",
+    "baseStats": { "atk": 12, "def": 12, "hp": 40 },
+    "spawnWeight": 8,
+    "color": "#f1c40f",
+    "unlockLevel": 3
+  },
+  {
+    "id": "necromancer",
+    "name": "Necromancer",
+    "baseStats": { "atk": 18, "def": 2, "hp": 18 },
+    "spawnWeight": 5,
+    "color": "#8e44ad",
+    "unlockLevel": 5
+  }
+]
