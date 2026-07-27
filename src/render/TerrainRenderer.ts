@@ -57,4 +57,9 @@ export class TerrainRenderer {
       }
     }
   }
+
+  destroy(): void {
+    this.graphics?.destroy();
+    this.graphics = null;
+  }
 }
