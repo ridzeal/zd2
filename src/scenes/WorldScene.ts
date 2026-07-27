@@ -3,29 +3,22 @@ import { gameState, placeRoom } from '../core/GameState';
 import { eventBus } from '../core/EventBus';
 import { RoomDef } from '../core/GameState';
 import roomsData from '../data/rooms.json';
-import classesData from '../data/classes.json';
 import { getAllAdventurers } from '../systems/AISystem';
 import { generateSprites } from '../assets/sprites/generateSprites';
 import { applyHD2DEffects } from '../shaders/HD2DPipeline';
 import { TerrainRenderer } from '../render/TerrainRenderer';
-import { gridToScreen, screenToGrid, gridToDepth, TILE_W, TILE_H } from '../render/Isometric';
+import { CharacterRenderer } from '../render/CharacterRenderer';
+import { gridToScreen, screenToGrid, TILE_W, TILE_H } from '../render/Isometric';
 
 const rooms: RoomDef[] = roomsData as RoomDef[];
 const GRID_COLS = 25;
 const GRID_ROWS = 18;
 const BLOCK_H = 8;
 
-interface ClassDef {
-  id: string;
-  name: string;
-  color: string;
-}
-const classes: ClassDef[] = classesData as ClassDef[];
-
 export class WorldScene extends Phaser.Scene {
   private roomGraphics!: Phaser.GameObjects.Graphics;
   private previewGraphics!: Phaser.GameObjects.Graphics;
-  private advGraphics!: Phaser.GameObjects.Graphics;
+  private charRenderer!: CharacterRenderer;
   private previewX = -1;
   private previewY = -1;
   private terrain!: TerrainRenderer;
@@ -54,7 +47,8 @@ export class WorldScene extends Phaser.Scene {
     // Room layer (below text, above grid)
     this.roomGraphics = this.add.graphics();
     this.previewGraphics = this.add.graphics();
-    this.advGraphics = this.add.graphics();
+    this.charRenderer = new CharacterRenderer();
+    this.charRenderer.create(this);
 
     // Grid click to place room
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -152,34 +146,10 @@ export class WorldScene extends Phaser.Scene {
       this.roomGraphics.fillPath();
     }
 
-    // Adventurers (sorted by depth)
-    this.advGraphics.clear();
+    // Adventurers (sprite-based rendering with depth sorting)
     const advMap = getAllAdventurers();
     const advArray = Array.from(advMap.values());
-    advArray.sort((a, b) => {
-      const da = gridToDepth(a.data.x / TILE_W, a.data.y / TILE_H);
-      const db = gridToDepth(b.data.x / TILE_W, b.data.y / TILE_H);
-      return da - db;
-    });
-    for (const adv of advArray) {
-      const cls = classes.find(c => c.id === adv.data.classId);
-      const color = cls ? Phaser.Display.Color.HexStringToColor(cls.color).color : 0xffffff;
-      const gridX = adv.data.x / TILE_W;
-      const gridY = adv.data.y / TILE_H;
-      const { x, y } = gridToScreen(gridX, gridY);
-
-      this.advGraphics.fillStyle(color, 0.9);
-      this.advGraphics.fillCircle(x, y - 4, 4);
-      this.advGraphics.lineStyle(1, 0xffffff, 0.6);
-      this.advGraphics.strokeCircle(x, y - 4, 4);
-
-      const hpRatio = adv.data.hp / adv.data.maxHp;
-      const hpColor = hpRatio > 0.3 ? 0x00ff00 : 0xff0000;
-      this.advGraphics.fillStyle(0x000000, 0.5);
-      this.advGraphics.fillRect(x - 8, y + 6, 16, 2);
-      this.advGraphics.fillStyle(hpColor, 0.8);
-      this.advGraphics.fillRect(x - 8, y + 6, 16 * hpRatio, 2);
-    }
+    this.charRenderer.update(advArray);
 
     // Preview
     this.previewGraphics.clear();
