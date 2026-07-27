@@ -6,6 +6,13 @@ import { ActivityLog } from '../ui/ActivityLog';
 import { gameState } from '../core/GameState';
 import { eventBus } from '../core/EventBus';
 
+const PANEL_BG = 0x2a1a0a;
+const PANEL_BG_ALPHA = 0.85;
+const PANEL_BORDER = 0xc4a66a;
+const HEADER_COLOR = '#c4a66a';
+const BODY_COLOR = '#e8d5b0';
+const GOLD_COLOR = '#ffd700';
+
 export class UIScene extends Phaser.Scene {
   private buildMenu!: BuildMenu;
   private speedToggle!: SpeedToggle;
@@ -21,18 +28,31 @@ export class UIScene extends Phaser.Scene {
   }
 
   create(): void {
-    // HUD text (top-left, above build menu)
-    this.tickText = this.add.text(10, 8, 'Tick: 0', {
-      fontSize: '14px', color: '#ffffff', fontFamily: 'monospace',
+    // Themed HUD panel (top-left, above build menu)
+    const panelX = 8;
+    const panelY = 4;
+    const panelW = 160;
+    const panelH = 72;
+
+    const hudPanel = this.add.graphics();
+    hudPanel.fillStyle(PANEL_BG, PANEL_BG_ALPHA);
+    hudPanel.fillRoundedRect(panelX, panelY, panelW, panelH, 6);
+    hudPanel.lineStyle(2, PANEL_BORDER, 0.8);
+    hudPanel.strokeRoundedRect(panelX, panelY, panelW, panelH, 6);
+    hudPanel.setDepth(190);
+
+    // HUD text (gold headers, cream body)
+    this.tickText = this.add.text(18, 10, 'Tick: 0', {
+      fontSize: '12px', color: BODY_COLOR, fontFamily: 'monospace',
     }).setDepth(200);
-    this.dayText = this.add.text(10, 24, 'Day: 1', {
-      fontSize: '14px', color: '#ffffff', fontFamily: 'monospace',
+    this.dayText = this.add.text(18, 26, 'Day: 1', {
+      fontSize: '12px', color: BODY_COLOR, fontFamily: 'monospace',
     }).setDepth(200);
-    this.goldText = this.add.text(10, 40, 'Gold: 100', {
-      fontSize: '14px', color: '#ffd700', fontFamily: 'monospace',
+    this.goldText = this.add.text(18, 42, 'Gold: 100', {
+      fontSize: '12px', color: GOLD_COLOR, fontFamily: 'monospace',
     }).setDepth(200);
-    this.levelText = this.add.text(10, 56, 'Level: 1', {
-      fontSize: '14px', color: '#00ff00', fontFamily: 'monospace',
+    this.levelText = this.add.text(18, 58, 'Level: 1', {
+      fontSize: '12px', color: '#7ec47e', fontFamily: 'monospace',
     }).setDepth(200);
 
     // Listen for updates
