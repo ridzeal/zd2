@@ -22,6 +22,8 @@ export class WorldScene extends Phaser.Scene {
   private previewX = -1;
   private previewY = -1;
   private terrain!: TerrainRenderer;
+  private roomsDirty = true;
+  private lastPreviewKey = '';
 
   constructor() {
     super({ key: 'WorldScene' });
@@ -63,6 +65,7 @@ export class WorldScene extends Phaser.Scene {
       if (!roomDef) return;
 
       if (placeRoom(gameState, roomDef, gridX, gridY)) {
+        this.roomsDirty = true;
         eventBus.emit('gold-change', { gold: gameState.gold, delta: -roomDef.cost });
         eventBus.emit('state-change');
       }
@@ -107,43 +110,46 @@ export class WorldScene extends Phaser.Scene {
     // Terrain
     this.terrain.render(GRID_COLS, GRID_ROWS);
 
-    // Redraw rooms as isometric 3D blocks
-    this.roomGraphics.clear();
-    for (const room of gameState.rooms) {
-      const def = rooms.find(r => r.id === room.typeId);
-      if (!def) continue;
-      const { x, y } = gridToScreen(room.gridX, room.gridY);
-      const color = Phaser.Display.Color.HexStringToColor(def.color).color;
+    // Redraw rooms only when changed
+    if (this.roomsDirty) {
+      this.roomsDirty = false;
+      this.roomGraphics.clear();
+      for (const room of gameState.rooms) {
+        const def = rooms.find(r => r.id === room.typeId);
+        if (!def) continue;
+        const { x, y } = gridToScreen(room.gridX, room.gridY);
+        const color = Phaser.Display.Color.HexStringToColor(def.color).color;
 
-      // Top face (roof)
-      this.roomGraphics.fillStyle(color, 0.85);
-      this.roomGraphics.beginPath();
-      this.roomGraphics.moveTo(x, y - TILE_H / 2 - BLOCK_H);
-      this.roomGraphics.lineTo(x + TILE_W / 2, y - BLOCK_H);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
-      this.roomGraphics.lineTo(x - TILE_W / 2, y - BLOCK_H);
-      this.roomGraphics.closePath();
-      this.roomGraphics.fillPath();
+        // Top face (roof)
+        this.roomGraphics.fillStyle(color, 0.85);
+        this.roomGraphics.beginPath();
+        this.roomGraphics.moveTo(x, y - TILE_H / 2 - BLOCK_H);
+        this.roomGraphics.lineTo(x + TILE_W / 2, y - BLOCK_H);
+        this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
+        this.roomGraphics.lineTo(x - TILE_W / 2, y - BLOCK_H);
+        this.roomGraphics.closePath();
+        this.roomGraphics.fillPath();
 
-      // Front face
-      this.roomGraphics.fillStyle(color, 0.7);
-      this.roomGraphics.beginPath();
-      this.roomGraphics.moveTo(x - TILE_W / 2, y - BLOCK_H);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2);
-      this.roomGraphics.lineTo(x - TILE_W / 2, y + BLOCK_H);
-      this.roomGraphics.closePath();
-      this.roomGraphics.fillPath();
+        // Front face
+        this.roomGraphics.fillStyle(color, 0.7);
+        this.roomGraphics.beginPath();
+        this.roomGraphics.moveTo(x - TILE_W / 2, y - BLOCK_H);
+        this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
+        this.roomGraphics.lineTo(x, y + TILE_H / 2);
+        this.roomGraphics.lineTo(x - TILE_W / 2, y + BLOCK_H);
+        this.roomGraphics.closePath();
+        this.roomGraphics.fillPath();
 
-      // Right face
-      this.roomGraphics.fillStyle(color, 0.6);
-      this.roomGraphics.beginPath();
-      this.roomGraphics.moveTo(x + TILE_W / 2, y - BLOCK_H);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2);
-      this.roomGraphics.lineTo(x + TILE_W / 2, y + BLOCK_H);
-      this.roomGraphics.closePath();
-      this.roomGraphics.fillPath();
+        // Right face
+        this.roomGraphics.fillStyle(color, 0.6);
+        this.roomGraphics.beginPath();
+        this.roomGraphics.moveTo(x + TILE_W / 2, y - BLOCK_H);
+        this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
+        this.roomGraphics.lineTo(x, y + TILE_H / 2);
+        this.roomGraphics.lineTo(x + TILE_W / 2, y + BLOCK_H);
+        this.roomGraphics.closePath();
+        this.roomGraphics.fillPath();
+      }
     }
 
     // Adventurers (sprite-based rendering with depth sorting)
@@ -151,25 +157,29 @@ export class WorldScene extends Phaser.Scene {
     const advArray = Array.from(advMap.values());
     this.charRenderer.update(advArray);
 
-    // Preview
-    this.previewGraphics.clear();
+    // Preview — only redraw when hover position or selection changes
     const selectedType = this.registry.get('selectedRoomType') as string | null;
-    if (selectedType && this.previewX >= 0 && this.previewY >= 0
-        && this.previewX < GRID_COLS && this.previewY < GRID_ROWS) {
-      const def = rooms.find(r => r.id === selectedType);
-      if (def) {
-        const occupied = gameState.rooms.some(r => r.gridX === this.previewX && r.gridY === this.previewY);
-        const canAfford = gameState.gold >= def.cost;
-        const alpha = occupied || !canAfford ? 0.2 : 0.4;
-        const { x, y } = gridToScreen(this.previewX, this.previewY);
-        this.previewGraphics.fillStyle(Phaser.Display.Color.HexStringToColor(def.color).color, alpha);
-        this.previewGraphics.beginPath();
-        this.previewGraphics.moveTo(x, y - TILE_H / 2);
-        this.previewGraphics.lineTo(x + TILE_W / 2, y);
-        this.previewGraphics.lineTo(x, y + TILE_H / 2);
-        this.previewGraphics.lineTo(x - TILE_W / 2, y);
-        this.previewGraphics.closePath();
-        this.previewGraphics.fillPath();
+    const previewKey = `${selectedType}:${this.previewX}:${this.previewY}`;
+    if (previewKey !== this.lastPreviewKey) {
+      this.lastPreviewKey = previewKey;
+      this.previewGraphics.clear();
+      if (selectedType && this.previewX >= 0 && this.previewY >= 0
+          && this.previewX < GRID_COLS && this.previewY < GRID_ROWS) {
+        const def = rooms.find(r => r.id === selectedType);
+        if (def) {
+          const occupied = gameState.rooms.some(r => r.gridX === this.previewX && r.gridY === this.previewY);
+          const canAfford = gameState.gold >= def.cost;
+          const alpha = occupied || !canAfford ? 0.2 : 0.4;
+          const { x, y } = gridToScreen(this.previewX, this.previewY);
+          this.previewGraphics.fillStyle(Phaser.Display.Color.HexStringToColor(def.color).color, alpha);
+          this.previewGraphics.beginPath();
+          this.previewGraphics.moveTo(x, y - TILE_H / 2);
+          this.previewGraphics.lineTo(x + TILE_W / 2, y);
+          this.previewGraphics.lineTo(x, y + TILE_H / 2);
+          this.previewGraphics.lineTo(x - TILE_W / 2, y);
+          this.previewGraphics.closePath();
+          this.previewGraphics.fillPath();
+        }
       }
     }
   }
