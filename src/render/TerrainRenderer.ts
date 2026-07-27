@@ -9,6 +9,7 @@ type PathType = 'h' | 'v' | 'cross' | 'corner';
 export class TerrainRenderer {
   private paths = new Map<string, PathType>();
   private graphics: Phaser.GameObjects.Graphics | null = null;
+  private dirty = true;
 
   private seed(x: number, y: number): number {
     let h = x * 374761393 + y * 668265263;
@@ -28,6 +29,7 @@ export class TerrainRenderer {
 
   setPath(gridX: number, gridY: number, type: PathType): void {
     this.paths.set(`${gridX},${gridY}`, type);
+    this.dirty = true;
   }
 
   create(scene: Phaser.Scene): void {
@@ -36,7 +38,8 @@ export class TerrainRenderer {
   }
 
   render(gridCols: number, gridRows: number): void {
-    if (!this.graphics) return;
+    if (!this.graphics || !this.dirty) return;
+    this.dirty = false;
     this.graphics.clear();
 
     for (let gx = 0; gx < gridCols; gx++) {

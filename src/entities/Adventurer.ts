@@ -2,8 +2,6 @@ import { AdventurerInstance } from '../core/GameState';
 
 const WALK_SPEED = 2;
 const RADIUS = 8;
-const HP_BAR_WIDTH = 16;
-const HP_BAR_HEIGHT = 2;
 const MIN_IDLE = 20;
 const MAX_IDLE = 50;
 
@@ -71,28 +69,5 @@ export class Adventurer {
 
   isAlive(): boolean {
     return this.data.hp > 0;
-  }
-
-  render(graphics: Phaser.GameObjects.Graphics, color: number): void {
-    const x = this.data.x;
-    const y = this.data.y;
-
-    // Circle
-    graphics.fillStyle(color, 0.9);
-    graphics.fillCircle(x, y, RADIUS);
-    graphics.lineStyle(1, 0xffffff, 0.6);
-    graphics.strokeCircle(x, y, RADIUS);
-
-    // HP bar background
-    const barX = x - HP_BAR_WIDTH / 2;
-    const barY = y + RADIUS + 2;
-    graphics.fillStyle(0x000000, 0.5);
-    graphics.fillRect(barX, barY, HP_BAR_WIDTH, HP_BAR_HEIGHT);
-
-    // HP bar fill
-    const hpRatio = this.data.hp / this.data.maxHp;
-    const hpColor = hpRatio > 0.3 ? 0x00ff00 : 0xff0000;
-    graphics.fillStyle(hpColor, 0.8);
-    graphics.fillRect(barX, barY, HP_BAR_WIDTH * hpRatio, HP_BAR_HEIGHT);
   }
 }

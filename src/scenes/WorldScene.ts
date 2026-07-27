@@ -13,6 +13,7 @@ import { gridToScreen, screenToGrid, gridToDepth, TILE_W, TILE_H } from '../rend
 const rooms: RoomDef[] = roomsData as RoomDef[];
 const GRID_COLS = 25;
 const GRID_ROWS = 18;
+const BLOCK_H = 8;
 
 interface ClassDef {
   id: string;
@@ -123,30 +124,30 @@ export class WorldScene extends Phaser.Scene {
       // Top face (roof)
       this.roomGraphics.fillStyle(color, 0.85);
       this.roomGraphics.beginPath();
-      this.roomGraphics.moveTo(x, y - TILE_H / 2 - 8);
-      this.roomGraphics.lineTo(x + TILE_W / 2, y - 8);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2 - 8);
-      this.roomGraphics.lineTo(x - TILE_W / 2, y - 8);
+      this.roomGraphics.moveTo(x, y - TILE_H / 2 - BLOCK_H);
+      this.roomGraphics.lineTo(x + TILE_W / 2, y - BLOCK_H);
+      this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
+      this.roomGraphics.lineTo(x - TILE_W / 2, y - BLOCK_H);
       this.roomGraphics.closePath();
       this.roomGraphics.fillPath();
 
       // Front face
       this.roomGraphics.fillStyle(color, 0.7);
       this.roomGraphics.beginPath();
-      this.roomGraphics.moveTo(x - TILE_W / 2, y - 8);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2 - 8);
+      this.roomGraphics.moveTo(x - TILE_W / 2, y - BLOCK_H);
+      this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
       this.roomGraphics.lineTo(x, y + TILE_H / 2);
-      this.roomGraphics.lineTo(x - TILE_W / 2, y + 8);
+      this.roomGraphics.lineTo(x - TILE_W / 2, y + BLOCK_H);
       this.roomGraphics.closePath();
       this.roomGraphics.fillPath();
 
       // Right face
       this.roomGraphics.fillStyle(color, 0.6);
       this.roomGraphics.beginPath();
-      this.roomGraphics.moveTo(x + TILE_W / 2, y - 8);
-      this.roomGraphics.lineTo(x, y + TILE_H / 2 - 8);
+      this.roomGraphics.moveTo(x + TILE_W / 2, y - BLOCK_H);
+      this.roomGraphics.lineTo(x, y + TILE_H / 2 - BLOCK_H);
       this.roomGraphics.lineTo(x, y + TILE_H / 2);
-      this.roomGraphics.lineTo(x + TILE_W / 2, y + 8);
+      this.roomGraphics.lineTo(x + TILE_W / 2, y + BLOCK_H);
       this.roomGraphics.closePath();
       this.roomGraphics.fillPath();
     }
