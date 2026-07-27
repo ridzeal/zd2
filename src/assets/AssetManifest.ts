@@ -25,12 +25,12 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   { key: 'building-temple', path: '/assets/buildings/building-temple.png', category: 'building' },
 
   // Characters (6 classes from classes.json)
-  { key: 'char-warrior', path: '/assets/characters/char-warrior.png', category: 'character', frameWidth: 32, frameHeight: 32 },
-  { key: 'char-mage', path: '/assets/characters/char-mage.png', category: 'character', frameWidth: 32, frameHeight: 32 },
-  { key: 'char-thief', path: '/assets/characters/char-thief.png', category: 'character', frameWidth: 32, frameHeight: 32 },
-  { key: 'char-cleric', path: '/assets/characters/char-cleric.png', category: 'character', frameWidth: 32, frameHeight: 32 },
-  { key: 'char-paladin', path: '/assets/characters/char-paladin.png', category: 'character', frameWidth: 32, frameHeight: 32 },
-  { key: 'char-necromancer', path: '/assets/characters/char-necromancer.png', category: 'character', frameWidth: 32, frameHeight: 32 },
+  { key: 'char-warrior', path: '/assets/characters/char-warrior.png', category: 'character', frameWidth: 16, frameHeight: 16 },
+  { key: 'char-mage', path: '/assets/characters/char-mage.png', category: 'character', frameWidth: 16, frameHeight: 16 },
+  { key: 'char-thief', path: '/assets/characters/char-thief.png', category: 'character', frameWidth: 16, frameHeight: 16 },
+  { key: 'char-cleric', path: '/assets/characters/char-cleric.png', category: 'character', frameWidth: 16, frameHeight: 16 },
+  { key: 'char-paladin', path: '/assets/characters/char-paladin.png', category: 'character', frameWidth: 16, frameHeight: 16 },
+  { key: 'char-necromancer', path: '/assets/characters/char-necromancer.png', category: 'character', frameWidth: 16, frameHeight: 16 },
 
   // Decorations
   { key: 'deco-torch', path: '/assets/decorations/deco-torch.png', category: 'decoration' },

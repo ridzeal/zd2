@@ -23,7 +23,7 @@ describe('Isometric coordinate conversion', () => {
     expect(g.gridX).toBe(3);
     expect(g.gridY).toBe(5);
   });
-  it('depth increases with Y then X', () => {
+  it('depth increases with X then Y', () => {
     expect(gridToDepth(0, 0)).toBeLessThan(gridToDepth(0, 1));
     expect(gridToDepth(0, 1)).toBeLessThan(gridToDepth(1, 0));
   });

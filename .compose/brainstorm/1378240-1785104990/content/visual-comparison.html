@@ -1,0 +1,92 @@
+<h2>Current State vs Dungeon Village 2 Target</h2>
+<p class="subtitle">Understanding the visual gap</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">Current: Flat Top-Down</div>
+    <div class="mockup-body" style="padding: 20px; background: #1a1a2e;">
+      <!-- Simulate current game look -->
+      <div style="position: relative; width: 100%; height: 300px; background: #0a0a1a; border: 2px solid #333; overflow: hidden;">
+        <!-- Grid lines -->
+        <svg style="position: absolute; width: 100%; height: 100%; opacity: 0.3;">
+          <defs>
+            <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+              <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#333355" stroke-width="1"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+        </svg>
+        <!-- Rooms as colored rectangles -->
+        <div style="position: absolute; left: 64px; top: 64px; width: 30px; height: 30px; background: #4a9eff; border: 1px solid rgba(255,255,255,0.6); opacity: 0.85;"></div>
+        <div style="position: absolute; left: 96px; top: 64px; width: 30px; height: 30px; background: #50c878; border: 1px solid rgba(255,255,255,0.6); opacity: 0.85;"></div>
+        <div style="position: absolute; left: 64px; top: 96px; width: 30px; height: 30px; background: #ff6347; border: 1px solid rgba(255,255,255,0.6); opacity: 0.85;"></div>
+        <!-- Adventurers as circles -->
+        <div style="position: absolute; left: 140px; top: 120px; width: 16px; height: 16px; background: #e74c3c; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6);"></div>
+        <div style="position: absolute; left: 180px; top: 80px; width: 16px; height: 16px; background: #3498db; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6);"></div>
+        <!-- HP bar -->
+        <div style="position: absolute; left: 132px; top: 140px; width: 16px; height: 2px; background: #000;"><div style="width: 70%; height: 100%; background: #00ff00;"></div></div>
+      </div>
+      <div style="margin-top: 10px; font-size: 12px; color: #888;">
+        <strong>Problems:</strong> Flat colored rects, visible grid, circle adventurers, no terrain, no depth
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">Target: Dungeon Village 2 Style</div>
+    <div class="mockup-body" style="padding: 20px; background: #2d5a1e;">
+      <!-- Simulate DV2 look -->
+      <div style="position: relative; width: 100%; height: 300px; background: linear-gradient(180deg, #4a8c3f 0%, #3d7a32 50%, #2d6a22 100%); border: 2px solid #1a4a0e; overflow: hidden;">
+        <!-- Grass texture hint -->
+        <div style="position: absolute; width: 100%; height: 100%; opacity: 0.15; background-image: radial-gradient(circle, #5a9c4f 1px, transparent 1px); background-size: 8px 8px;"></div>
+        <!-- Path -->
+        <div style="position: absolute; left: 40px; top: 180px; width: 200px; height: 20px; background: #c4a66a; border-radius: 10px; transform: rotate(-5deg);"></div>
+        <!-- Building with roof + walls (pseudo-3D) -->
+        <div style="position: absolute; left: 60px; top: 60px;">
+          <!-- Roof -->
+          <div style="width: 64px; height: 20px; background: #8b4513; clip-path: polygon(10% 100%, 50% 0%, 90% 100%);"></div>
+          <!-- Wall -->
+          <div style="width: 56px; height: 32px; background: #d4a574; margin: 0 auto; border: 1px solid #8b6914;">
+            <!-- Door -->
+            <div style="width: 12px; height: 16px; background: #5a3a1a; margin: 14px auto 0;"></div>
+          </div>
+        </div>
+        <!-- Another building -->
+        <div style="position: absolute; left: 150px; top: 80px;">
+          <div style="width: 56px; height: 18px; background: #6b3a1a; clip-path: polygon(10% 100%, 50% 0%, 90% 100%);"></div>
+          <div style="width: 48px; height: 28px; background: #e8c99b; margin: 0 auto; border: 1px solid #8b6914;">
+            <div style="width: 10px; height: 14px; background: #5a3a1a; margin: 12px auto 0;"></div>
+          </div>
+        </div>
+        <!-- Tree -->
+        <div style="position: absolute; left: 220px; top: 100px;">
+          <div style="width: 8px; height: 20px; background: #5a3a1a; margin: 0 auto;"></div>
+          <div style="width: 32px; height: 28px; background: #2d7a1e; border-radius: 50%; margin-top: -8px;"></div>
+        </div>
+        <!-- Character sprite (simple pixel art) -->
+        <div style="position: absolute; left: 120px; top: 200px;">
+          <div style="width: 12px; height: 12px; background: #e74c3c; border-radius: 3px;"></div>
+          <div style="width: 8px; height: 10px; background: #3468a8; margin: 1px auto 0;"></div>
+        </div>
+        <!-- Flower -->
+        <div style="position: absolute; left: 100px; top: 220px; font-size: 12px;">🌸</div>
+        <div style="position: absolute; left: 200px; top: 160px; font-size: 12px;">🌿</div>
+      </div>
+      <div style="margin-top: 10px; font-size: 12px; color: #c4e0a6;">
+        <strong>Goal:</strong> Grass terrain, buildings with roofs+walls, path tiles, trees/flowers, character sprites, no grid
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>Key Visual Differences</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+    <div><strong>Camera:</strong> Flat top-down → Slight 3/4 isometric angle</div>
+    <div><strong>Buildings:</strong> Colored rectangles → Detailed sprites with roofs + walls</div>
+    <div><strong>Characters:</strong> Colored circles → Pixel art sprites with walk animations</div>
+    <div><strong>Terrain:</strong> Black + grid lines → Grass tiles with paths</div>
+    <div><strong>Decorations:</strong> None → Trees, flowers, bushes, water</div>
+    <div><strong>Depth:</strong> None → Ground → Buildings → Characters → Sky layers</div>
+  </div>
+</div>

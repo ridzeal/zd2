@@ -1,0 +1,4 @@
+{"type":"server-started","port":64429,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:64429","screen_dir":"/home/riadhi/GameDev/ZD2/.compose/brainstorm/1378240-1785104990/content","state_dir":"/home/riadhi/GameDev/ZD2/.compose/brainstorm/1378240-1785104990/state"}
+{"type":"screen-added","file":"/home/riadhi/GameDev/ZD2/.compose/brainstorm/1378240-1785104990/content/visual-comparison.html"}
+{"type":"screen-added","file":"/home/riadhi/GameDev/ZD2/.compose/brainstorm/1378240-1785104990/content/asset-spec.html"}
+{"type":"server-stopped","reason":"idle timeout"}
