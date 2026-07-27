@@ -49,15 +49,52 @@ export function generateSprites(scene: Phaser.Scene): void {
     const half = def.size / 2 - 1;
 
     switch (def.shape) {
-      case 'square':
-        ctx.fillRect(1, 1, def.size - 2, def.size - 2);
-        ctx.strokeRect(1, 1, def.size - 2, def.size - 2);
-        break;
-      case 'circle':
+      case 'square': {
+        // Top face (roof) — lighter color
+        ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
         ctx.beginPath();
-        ctx.arc(cx, cy, half, 0, Math.PI * 2);
+        ctx.moveTo(cx, 2);
+        ctx.lineTo(def.size - 2, cy / 2 + 2);
+        ctx.lineTo(cx, cy + 2);
+        ctx.lineTo(2, cy / 2 + 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Front face (wall) — darker
+        const darkerR = Math.max(0, r - 40);
+        const darkerG = Math.max(0, g - 40);
+        const darkerB = Math.max(0, b - 40);
+        ctx.fillStyle = `rgb(${darkerR}, ${darkerG}, ${darkerB})`;
+        ctx.beginPath();
+        ctx.moveTo(2, cy / 2 + 2);
+        ctx.lineTo(cx, cy + 2);
+        ctx.lineTo(cx, def.size - 2);
+        ctx.lineTo(2, cy + 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Right face — darkest
+        const darkestR = Math.max(0, r - 60);
+        const darkestG = Math.max(0, g - 60);
+        const darkestB = Math.max(0, b - 60);
+        ctx.fillStyle = `rgb(${darkestR}, ${darkestG}, ${darkestB})`;
+        ctx.beginPath();
+        ctx.moveTo(def.size - 2, cy / 2 + 2);
+        ctx.lineTo(cx, cy + 2);
+        ctx.lineTo(cx, def.size - 2);
+        ctx.lineTo(def.size - 2, cy + 2);
+        ctx.closePath();
+        ctx.fill();
+        break;
+      }
+      case 'circle':
+        // Head
+        ctx.beginPath();
+        ctx.arc(cx, cy - 2, half - 2, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+        // Body
+        ctx.fillRect(cx - 3, cy + 2, 6, half - 2);
         break;
       case 'triangle':
         ctx.beginPath();
