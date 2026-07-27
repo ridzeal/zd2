@@ -25,6 +25,11 @@ export class WorldScene extends Phaser.Scene {
   private roomsDirty = true;
   private lastPreviewKey = '';
 
+  // Bound handlers so we can remove them on shutdown
+  private onPointerDown!: (pointer: Phaser.Input.Pointer) => void;
+  private onPointerMove!: (pointer: Phaser.Input.Pointer) => void;
+  private onRoomInteraction!: (data: { x: number; y: number; text: string; color: string }) => void;
+
   constructor() {
     super({ key: 'WorldScene' });
   }
@@ -52,8 +57,12 @@ export class WorldScene extends Phaser.Scene {
     this.charRenderer = new CharacterRenderer();
     this.charRenderer.create(this);
 
-    // Grid click to place room
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+    // Store bound handlers for cleanup
+    this.onPointerDown = (pointer: Phaser.Input.Pointer) => {
+      if (pointer.rightButtonDown()) {
+        eventBus.emit('deselect-room');
+        return;
+      }
       const selectedType = this.registry.get('selectedRoomType') as string | null;
       if (!selectedType) return;
 
@@ -69,25 +78,16 @@ export class WorldScene extends Phaser.Scene {
         eventBus.emit('gold-change', { gold: gameState.gold, delta: -roomDef.cost });
         eventBus.emit('state-change');
       }
-    });
+    };
 
-    // Right-click to deselect
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      if (pointer.rightButtonDown()) {
-        eventBus.emit('deselect-room');
-      }
-    });
-
-    // Hover preview
-    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+    this.onPointerMove = (pointer: Phaser.Input.Pointer) => {
       const worldPoint = this.cameras.main.getWorldPoint(pointer.x, pointer.y);
       const { gridX, gridY } = screenToGrid(worldPoint.x, worldPoint.y);
       this.previewX = gridX;
       this.previewY = gridY;
-    });
+    };
 
-    // Floating text for room interactions
-    eventBus.on('room-interaction', (data: { x: number; y: number; text: string; color: string }) => {
+    this.onRoomInteraction = (data: { x: number; y: number; text: string; color: string }) => {
       const txt = this.add.text(data.x, data.y, data.text, {
         fontSize: '12px',
         color: data.color,
@@ -103,7 +103,30 @@ export class WorldScene extends Phaser.Scene {
         ease: 'Power2',
         onComplete: () => txt.destroy(),
       });
-    });
+    };
+
+    // Register listeners
+    this.input.on('pointerdown', this.onPointerDown);
+    this.input.on('pointermove', this.onPointerMove);
+    eventBus.on('room-interaction', this.onRoomInteraction);
+
+    // Cleanup on scene shutdown
+    this.events.on('shutdown', this.shutdown, this);
+  }
+
+  private shutdown(): void {
+    // Remove input listeners
+    this.input.off('pointerdown', this.onPointerDown);
+    this.input.off('pointermove', this.onPointerMove);
+
+    // Remove eventBus listener
+    eventBus.off('room-interaction', this.onRoomInteraction);
+
+    // Destroy renderers
+    this.terrain?.destroy();
+    this.charRenderer?.destroy();
+    this.roomGraphics?.destroy();
+    this.previewGraphics?.destroy();
   }
 
   update(): void {

@@ -15,6 +15,13 @@ export class ActivityLog {
   private toggleBtn!: Phaser.GameObjects.Text;
   private container!: Phaser.GameObjects.Container;
 
+  // Bound handlers for cleanup
+  private onRoomInteraction!: (data: { text: string; color: string }) => void;
+  private onMilestoneReached!: (data: { day: number }) => void;
+  private onAdventurerArrived!: (data: { classId: string }) => void;
+  private onQuestComplete!: (data: { advId: string; won: boolean }) => void;
+  private onLevelUp!: (data: { level: number }) => void;
+
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
   }
@@ -50,22 +57,30 @@ export class ActivityLog {
       this.container.add(txt);
     }
 
+    // Store bound handlers for cleanup
+    this.onRoomInteraction = (data) => this.addLog(data.text, data.color);
+    this.onMilestoneReached = (data) => this.addLog(`Milestone reached: Day ${data.day}`, '#ffd700');
+    this.onAdventurerArrived = (data) => this.addLog(`New adventurer arrived: ${data.classId}`, '#00ff00');
+    this.onQuestComplete = (data) => this.addLog(`Quest ${data.won ? 'won' : 'lost'} by ${data.advId}`, data.won ? '#ffd700' : '#ff4444');
+    this.onLevelUp = (data) => this.addLog(`Level up! Now level ${data.level}`, '#ffd700');
+
     // Listen to events
-    eventBus.on('room-interaction', (data) => {
-      this.addLog(data.text, data.color);
-    });
-    eventBus.on('milestone-reached', (data) => {
-      this.addLog(`Milestone reached: Day ${data.day}`, '#ffd700');
-    });
-    eventBus.on('adventurer-arrived', (data) => {
-      this.addLog(`New adventurer arrived: ${data.classId}`, '#00ff00');
-    });
-    eventBus.on('quest-complete', (data) => {
-      this.addLog(`Quest ${data.won ? 'won' : 'lost'} by ${data.advId}`, data.won ? '#ffd700' : '#ff4444');
-    });
-    eventBus.on('level-up', (data) => {
-      this.addLog(`Level up! Now level ${data.level}`, '#ffd700');
-    });
+    eventBus.on('room-interaction', this.onRoomInteraction);
+    eventBus.on('milestone-reached', this.onMilestoneReached);
+    eventBus.on('adventurer-arrived', this.onAdventurerArrived);
+    eventBus.on('quest-complete', this.onQuestComplete);
+    eventBus.on('level-up', this.onLevelUp);
+  }
+
+  destroy(): void {
+    eventBus.off('room-interaction', this.onRoomInteraction);
+    eventBus.off('milestone-reached', this.onMilestoneReached);
+    eventBus.off('adventurer-arrived', this.onAdventurerArrived);
+    eventBus.off('quest-complete', this.onQuestComplete);
+    eventBus.off('level-up', this.onLevelUp);
+    this.textObjects.forEach(t => t.destroy());
+    this.textObjects = [];
+    this.container?.destroy();
   }
 
   private addLog(text: string, color?: string): void {

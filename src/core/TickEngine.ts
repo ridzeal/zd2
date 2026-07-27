@@ -12,14 +12,16 @@ export class TickEngine {
   private state: GameState;
   private onTick: () => void;
   private speed: 1 | 2 = 1;
+  private onSpeedChange: (data: { speed: 1 | 2 }) => void;
 
   constructor(state: GameState, onTick: () => void) {
     this.state = state;
     this.onTick = onTick;
 
-    eventBus.on('speed-change', (data) => {
+    this.onSpeedChange = (data) => {
       this.setSpeed(data.speed);
-    });
+    };
+    eventBus.on('speed-change', this.onSpeedChange);
   }
 
   start(): void {
@@ -40,6 +42,11 @@ export class TickEngine {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
+  }
+
+  destroy(): void {
+    this.stop();
+    eventBus.off('speed-change', this.onSpeedChange);
   }
 
   setSpeed(speed: 1 | 2): void {

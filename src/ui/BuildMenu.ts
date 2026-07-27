@@ -21,6 +21,8 @@ export class BuildMenu {
   private scene: Phaser.Scene;
   private buttons: Phaser.GameObjects.Container[] = [];
   private selectedId: string | null = null;
+  private onDeselect!: () => void;
+  private onLevelUp!: () => void;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -73,8 +75,17 @@ export class BuildMenu {
       this.buttons.push(container);
     });
 
-    eventBus.on('deselect-room', () => this.deselect());
-    eventBus.on('level-up', () => this.refresh());
+    this.onDeselect = () => this.deselect();
+    this.onLevelUp = () => this.refresh();
+    eventBus.on('deselect-room', this.onDeselect);
+    eventBus.on('level-up', this.onLevelUp);
+  }
+
+  destroy(): void {
+    eventBus.off('deselect-room', this.onDeselect);
+    eventBus.off('level-up', this.onLevelUp);
+    this.buttons.forEach(btn => btn.destroy());
+    this.buttons = [];
   }
 
   refresh(): void {

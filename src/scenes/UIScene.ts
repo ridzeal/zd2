@@ -23,6 +23,11 @@ export class UIScene extends Phaser.Scene {
   private goldText!: Phaser.GameObjects.Text;
   private levelText!: Phaser.GameObjects.Text;
 
+  // Bound handlers for cleanup
+  private onGoldChange!: () => void;
+  private onTick!: (data: { tick: number; day: number }) => void;
+  private onLevelUp!: (data: { level: number }) => void;
+
   constructor() {
     super({ key: 'UIScene' });
   }
@@ -55,17 +60,22 @@ export class UIScene extends Phaser.Scene {
       fontSize: '12px', color: '#7ec47e', fontFamily: 'monospace',
     }).setDepth(200);
 
-    // Listen for updates
-    eventBus.on('gold-change', () => {
+    // Store bound handlers for cleanup
+    this.onGoldChange = () => {
       this.goldText?.setText(`Gold: ${gameState.gold}`);
-    });
-    eventBus.on('tick', (data) => {
+    };
+    this.onTick = (data) => {
       this.tickText?.setText(`Tick: ${data.tick}`);
       this.dayText?.setText(`Day: ${data.day}`);
-    });
-    eventBus.on('level-up', (data) => {
+    };
+    this.onLevelUp = (data) => {
       this.levelText?.setText(`Level: ${data.level}`);
-    });
+    };
+
+    // Listen for updates
+    eventBus.on('gold-change', this.onGoldChange);
+    eventBus.on('tick', this.onTick);
+    eventBus.on('level-up', this.onLevelUp);
 
     this.buildMenu = new BuildMenu(this);
     this.buildMenu.create();
@@ -75,5 +85,16 @@ export class UIScene extends Phaser.Scene {
     this.saveLoadUI.create();
     this.activityLog = new ActivityLog(this);
     this.activityLog.create();
+
+    // Cleanup on scene shutdown
+    this.events.on('shutdown', this.shutdown, this);
+  }
+
+  private shutdown(): void {
+    eventBus.off('gold-change', this.onGoldChange);
+    eventBus.off('tick', this.onTick);
+    eventBus.off('level-up', this.onLevelUp);
+    this.buildMenu.destroy();
+    this.activityLog.destroy();
   }
 }
