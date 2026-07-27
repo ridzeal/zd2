@@ -9,13 +9,16 @@ export interface AssetEntry {
 }
 
 export const ASSET_MANIFEST: AssetEntry[] = [
-  // Terrain
-  { key: 'terrain-grass', path: '/assets/terrain/terrain-grass.png', category: 'terrain' },
-  { key: 'terrain-stone', path: '/assets/terrain/terrain-stone.png', category: 'terrain' },
-  { key: 'terrain-dirt', path: '/assets/terrain/terrain-dirt.png', category: 'terrain' },
-  { key: 'terrain-water', path: '/assets/terrain/terrain-water.png', category: 'terrain' },
+  // Terrain (32x32)
+  { key: 'terrain-grass-1', path: '/assets/terrain/grass-1.png', category: 'terrain' },
+  { key: 'terrain-grass-2', path: '/assets/terrain/grass-2.png', category: 'terrain' },
+  { key: 'terrain-grass-3', path: '/assets/terrain/grass-3.png', category: 'terrain' },
+  { key: 'terrain-path-h', path: '/assets/terrain/path-h.png', category: 'terrain' },
+  { key: 'terrain-path-v', path: '/assets/terrain/path-v.png', category: 'terrain' },
+  { key: 'terrain-path-cross', path: '/assets/terrain/path-cross.png', category: 'terrain' },
+  { key: 'terrain-path-corner', path: '/assets/terrain/path-corner.png', category: 'terrain' },
 
-  // Buildings (7 types from rooms.json)
+  // Buildings (64x64)
   { key: 'building-shop', path: '/assets/buildings/building-shop.png', category: 'building' },
   { key: 'building-inn', path: '/assets/buildings/building-inn.png', category: 'building' },
   { key: 'building-smithy', path: '/assets/buildings/building-smithy.png', category: 'building' },
@@ -24,7 +27,7 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   { key: 'building-library', path: '/assets/buildings/building-library.png', category: 'building' },
   { key: 'building-temple', path: '/assets/buildings/building-temple.png', category: 'building' },
 
-  // Characters (6 classes from classes.json)
+  // Characters (16x16 spritesheet, 4x4 frames)
   { key: 'char-warrior', path: '/assets/characters/char-warrior.png', category: 'character', frameWidth: 16, frameHeight: 16 },
   { key: 'char-mage', path: '/assets/characters/char-mage.png', category: 'character', frameWidth: 16, frameHeight: 16 },
   { key: 'char-thief', path: '/assets/characters/char-thief.png', category: 'character', frameWidth: 16, frameHeight: 16 },
@@ -33,12 +36,12 @@ export const ASSET_MANIFEST: AssetEntry[] = [
   { key: 'char-necromancer', path: '/assets/characters/char-necromancer.png', category: 'character', frameWidth: 16, frameHeight: 16 },
 
   // Decorations
-  { key: 'deco-torch', path: '/assets/decorations/deco-torch.png', category: 'decoration' },
-  { key: 'deco-sign', path: '/assets/decorations/deco-sign.png', category: 'decoration' },
-
-  // UI
-  { key: 'ui-gold-icon', path: '/assets/ui/ui-gold-icon.png', category: 'ui' },
-  { key: 'ui-heart-icon', path: '/assets/ui/ui-heart-icon.png', category: 'ui' },
+  { key: 'deco-tree-1', path: '/assets/decorations/deco-tree1.png', category: 'decoration' },
+  { key: 'deco-tree-2', path: '/assets/decorations/deco-tree2.png', category: 'decoration' },
+  { key: 'deco-bush', path: '/assets/decorations/deco-bush.png', category: 'decoration' },
+  { key: 'deco-flower-red', path: '/assets/decorations/deco-flower-red.png', category: 'decoration' },
+  { key: 'deco-flower-yellow', path: '/assets/decorations/deco-flower-yellow.png', category: 'decoration' },
+  { key: 'deco-rock', path: '/assets/decorations/deco-rock.png', category: 'decoration' },
 ];
 
 export function getAssetsByCategory(category: AssetCategory): AssetEntry[] {

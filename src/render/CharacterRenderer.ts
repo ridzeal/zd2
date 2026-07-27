@@ -31,16 +31,27 @@ export class CharacterRenderer {
   }
 
   private createDirectionalAnims(spriteKey: string): void {
+    // Check if texture has frame data (spritesheet loaded correctly)
+    const tex = this.scene.textures.get(spriteKey);
+    if (!tex || !tex.frames || Object.keys(tex.frames).length <= 1) {
+      return; // Placeholder or missing spritesheet — skip animation creation
+    }
+
     for (const dir of Object.keys(DIRECTION_RANGES) as Direction[]) {
       const animKey = `${spriteKey}-walk-${dir}`;
       if (!this.scene.anims.exists(animKey)) {
         const { start, end } = DIRECTION_RANGES[dir];
-        this.scene.anims.create({
-          key: animKey,
-          frames: this.scene.anims.generateFrameNumbers(spriteKey, { start, end }),
-          frameRate: 6,
-          repeat: -1,
-        });
+        try {
+          this.scene.anims.create({
+            key: animKey,
+            frames: this.scene.anims.generateFrameNumbers(spriteKey, { start, end }),
+            frameRate: 6,
+            repeat: -1,
+          });
+        } catch {
+          // Frame range exceeds available frames — skip this animation
+          return;
+        }
       }
     }
   }
@@ -81,12 +92,15 @@ export class CharacterRenderer {
         this.sprites.set(adv.data.id, sprite);
 
         this.createDirectionalAnims(spriteKey);
-        sprite.play(`${spriteKey}-walk-down`);
+        const downAnim = `${spriteKey}-walk-down`;
+        if (this.scene.anims.exists(downAnim)) {
+          sprite.play(downAnim);
+        }
       }
 
       const dir = this.getDirection(prev, { x: adv.data.x, y: adv.data.y });
       const animKey = `${spriteKey}-walk-${dir}`;
-      if (sprite.anims.currentAnim?.key !== animKey) {
+      if (this.scene.anims.exists(animKey) && sprite.anims.currentAnim?.key !== animKey) {
         sprite.play(animKey);
       }
 
