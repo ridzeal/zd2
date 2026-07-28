@@ -5,6 +5,7 @@ import { SaveLoadUI } from '../ui/SaveLoadUI';
 import { ActivityLog } from '../ui/ActivityLog';
 import { gameState } from '../core/GameState';
 import { eventBus } from '../core/EventBus';
+import { getAllAdventurers } from '../systems/AISystem';
 
 const PANEL_BG = 0x2a1a0a;
 const PANEL_BG_ALPHA = 0.85;
@@ -22,11 +23,16 @@ export class UIScene extends Phaser.Scene {
   private dayText!: Phaser.GameObjects.Text;
   private goldText!: Phaser.GameObjects.Text;
   private levelText!: Phaser.GameObjects.Text;
+  private debugText!: Phaser.GameObjects.Text;
 
   // Bound handlers for cleanup
   private onGoldChange!: () => void;
   private onTick!: (data: { tick: number; day: number }) => void;
   private onLevelUp!: (data: { level: number }) => void;
+
+  private frameCount = 0;
+  private lastFpsTime = 0;
+  private currentFps = 0;
 
   constructor() {
     super({ key: 'UIScene' });
@@ -86,6 +92,18 @@ export class UIScene extends Phaser.Scene {
     this.activityLog = new ActivityLog(this);
     this.activityLog.create();
 
+    // Debug stats panel (top-right corner)
+    const debugBg = this.add.graphics();
+    debugBg.fillStyle(0x000000, 0.75);
+    debugBg.fillRoundedRect(630, 4, 162, 80, 4);
+    debugBg.setDepth(290);
+
+    this.debugText = this.add.text(636, 8, 'Loading...', {
+      fontSize: '10px', color: '#00ff88', fontFamily: 'monospace',
+    }).setDepth(300);
+
+    this.lastFpsTime = performance.now();
+
     // Cleanup on scene shutdown
     this.events.on('shutdown', this.shutdown, this);
   }
@@ -96,5 +114,33 @@ export class UIScene extends Phaser.Scene {
     eventBus.off('level-up', this.onLevelUp);
     this.buildMenu.destroy();
     this.activityLog.destroy();
+  }
+
+  update(): void {
+    // FPS counter
+    this.frameCount++;
+    const now = performance.now();
+    if (now - this.lastFpsTime >= 1000) {
+      this.currentFps = this.frameCount;
+      this.frameCount = 0;
+      this.lastFpsTime = now;
+    }
+
+    // Gather stats
+    const advs = getAllAdventurers();
+    const texCount = this.textures?.getTextureKeys?.()?.length ?? 0;
+    const displayCount = this.scene.get('WorldScene')?.children?.length ?? 0;
+    const mem = (performance as any).memory;
+    const memMB = mem ? (mem.usedJSHeapSize / 1024 / 1024).toFixed(0) : '?';
+    const heapMB = mem ? (mem.jsHeapSizeLimit / 1024 / 1024).toFixed(0) : '?';
+
+    this.debugText?.setText([
+      `FPS: ${this.currentFps}`,
+      `MEM: ${memMB}MB / ${heapMB}MB`,
+      `Adventurers: ${advs.size}`,
+      `Rooms: ${gameState.rooms.length}`,
+      `Objects: ${displayCount}`,
+      `Textures: ${texCount}`,
+    ].join('\n'));
   }
 }
