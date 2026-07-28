@@ -15,6 +15,8 @@ const INTERACTION_COOLDOWN = 30;
 // Track cooldowns per adventurer+room
 const cooldowns = new Map<string, number>();
 
+export function getCooldownCount(): number { return cooldowns.size; }
+
 export function processEconomy(state: GameState): void {
   // Decrease all cooldowns
   for (const [key, val] of cooldowns) {

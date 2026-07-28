@@ -6,6 +6,8 @@ import { ActivityLog } from '../ui/ActivityLog';
 import { gameState } from '../core/GameState';
 import { eventBus } from '../core/EventBus';
 import { getAllAdventurers } from '../systems/AISystem';
+import { getCooldownCount } from '../systems/EconomySystem';
+import { getQuestingCount } from '../systems/QuestSystem';
 
 const PANEL_BG = 0x2a1a0a;
 const PANEL_BG_ALPHA = 0.85;
@@ -130,6 +132,8 @@ export class UIScene extends Phaser.Scene {
     const advs = getAllAdventurers();
     const texCount = this.textures?.getTextureKeys?.()?.length ?? 0;
     const displayCount = this.scene.get('WorldScene')?.children?.length ?? 0;
+    const worldScene = this.scene.get('WorldScene');
+    const tweensActive = worldScene?.tweens?.getTweens?.()?.length ?? 0;
     const mem = (performance as any).memory;
     const memMB = mem ? (mem.usedJSHeapSize / 1024 / 1024).toFixed(0) : '?';
     const heapMB = mem ? (mem.jsHeapSizeLimit / 1024 / 1024).toFixed(0) : '?';
@@ -137,9 +141,9 @@ export class UIScene extends Phaser.Scene {
     this.debugText?.setText([
       `FPS: ${this.currentFps}`,
       `MEM: ${memMB}MB / ${heapMB}MB`,
-      `Adventurers: ${advs.size}`,
-      `Rooms: ${gameState.rooms.length}`,
-      `Objects: ${displayCount}`,
+      `Adventurers: ${advs.size}  Rooms: ${gameState.rooms.length}`,
+      `Objects: ${displayCount}  Tweens: ${tweensActive}`,
+      `Cooldowns: ${getCooldownCount()}  Quests: ${getQuestingCount()}`,
       `Textures: ${texCount}`,
     ].join('\n'));
   }

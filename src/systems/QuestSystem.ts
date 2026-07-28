@@ -21,6 +21,8 @@ const QUEST_DELAY = 20; // ticks before quest resolves
 // Track quest state per adventurer
 const questing = new Map<string, number>(); // advId -> ticks remaining
 
+export function getQuestingCount(): number { return questing.size; }
+
 export function processQuests(state: GameState): void {
   // Process ongoing quests
   for (const [advId, ticksLeft] of questing) {
