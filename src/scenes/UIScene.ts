@@ -137,15 +137,22 @@ export class UIScene extends Phaser.Scene {
     const floatingTexts = worldScene?.getFloatingTextCount?.() ?? 0;
     const mem = (performance as any).memory;
     const memMB = mem ? (mem.usedJSHeapSize / 1024 / 1024).toFixed(0) : '?';
-    const heapMB = mem ? (mem.jsHeapSizeLimit / 1024 / 1024).toFixed(0) : '?';
+
+    // Tick engine stats
+    const getEngine = (window as any).__tickEngine;
+    const engine = getEngine?.();
+    const tickStats = engine?.getStats?.();
+    const tickAge = tickStats ? Math.round((performance.now() - tickStats.lastTickTime) / 1000) : -1;
+    const tickDur = tickStats ? tickStats.lastTickDuration.toFixed(1) : '?';
+    const aiMs = tickStats ? tickStats.aiMs.toFixed(1) : '?';
+    const ecoMs = tickStats ? tickStats.economyMs.toFixed(1) : '?';
 
     this.debugText?.setText([
-      `FPS: ${this.currentFps}`,
-      `MEM: ${memMB}MB / ${heapMB}MB`,
-      `Adv: ${advs.size}  Rooms: ${gameState.rooms.length}`,
-      `Objects: ${displayCount}  Tweens: ${tweensActive}`,
-      `FloatText: ${floatingTexts}/20`,
-      `CD: ${getCooldownCount()}  Q: ${getQuestingCount()}  Tex: ${texCount}`,
+      `FPS: ${this.currentFps}  MEM: ${memMB}MB`,
+      `Adv: ${advs.size}  Rooms: ${gameState.rooms.length}  Obj: ${displayCount}`,
+      `Tweens: ${tweensActive}  Float: ${floatingTexts}/20`,
+      `Tick#${tickStats?.tickCount ?? '?'} age:${tickAge}s dur:${tickDur}ms`,
+      `AI:${aiMs}ms  Eco:${ecoMs}ms  CD:${getCooldownCount()}  Q:${getQuestingCount()}`,
     ].join('\n'));
   }
 }

@@ -34,10 +34,14 @@ if (hasSave()) {
 const game = new Phaser.Game(config);
 
 // Start tick engine after a short delay to let Phaser init
+let engine: TickEngine;
 setTimeout(() => {
-  const engine = new TickEngine(gameState, () => {});
+  engine = new TickEngine(gameState, () => {});
   engine.start();
 }, 500);
+
+// Expose for debug overlay
+(window as any).__tickEngine = () => engine;
 
 // Auto-save on page unload
 window.addEventListener('beforeunload', () => {
