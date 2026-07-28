@@ -132,8 +132,9 @@ export class UIScene extends Phaser.Scene {
     const advs = getAllAdventurers();
     const texCount = this.textures?.getTextureKeys?.()?.length ?? 0;
     const displayCount = this.scene.get('WorldScene')?.children?.length ?? 0;
-    const worldScene = this.scene.get('WorldScene');
+    const worldScene = this.scene.get('WorldScene') as any;
     const tweensActive = worldScene?.tweens?.getTweens?.()?.length ?? 0;
+    const floatingTexts = worldScene?.getFloatingTextCount?.() ?? 0;
     const mem = (performance as any).memory;
     const memMB = mem ? (mem.usedJSHeapSize / 1024 / 1024).toFixed(0) : '?';
     const heapMB = mem ? (mem.jsHeapSizeLimit / 1024 / 1024).toFixed(0) : '?';
@@ -141,10 +142,10 @@ export class UIScene extends Phaser.Scene {
     this.debugText?.setText([
       `FPS: ${this.currentFps}`,
       `MEM: ${memMB}MB / ${heapMB}MB`,
-      `Adventurers: ${advs.size}  Rooms: ${gameState.rooms.length}`,
+      `Adv: ${advs.size}  Rooms: ${gameState.rooms.length}`,
       `Objects: ${displayCount}  Tweens: ${tweensActive}`,
-      `Cooldowns: ${getCooldownCount()}  Quests: ${getQuestingCount()}`,
-      `Textures: ${texCount}`,
+      `FloatText: ${floatingTexts}/20`,
+      `CD: ${getCooldownCount()}  Q: ${getQuestingCount()}  Tex: ${texCount}`,
     ].join('\n'));
   }
 }

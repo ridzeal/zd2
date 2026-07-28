@@ -24,6 +24,10 @@ export class WorldScene extends Phaser.Scene {
   private terrain!: TerrainRenderer;
   private roomsDirty = true;
   private lastPreviewKey = '';
+  private activeFloatingTexts = 0;
+  private static readonly MAX_FLOATING_TEXTS = 20;
+
+  getFloatingTextCount(): number { return this.activeFloatingTexts; }
 
   // Bound handlers so we can remove them on shutdown
   private onPointerDown!: (pointer: Phaser.Input.Pointer) => void;
@@ -88,6 +92,9 @@ export class WorldScene extends Phaser.Scene {
     };
 
     this.onRoomInteraction = (data: { x: number; y: number; text: string; color: string }) => {
+      if (this.activeFloatingTexts >= WorldScene.MAX_FLOATING_TEXTS) return;
+
+      this.activeFloatingTexts++;
       const txt = this.add.text(data.x, data.y, data.text, {
         fontSize: '12px',
         color: data.color,
@@ -101,7 +108,10 @@ export class WorldScene extends Phaser.Scene {
         alpha: 0,
         duration: 1000,
         ease: 'Power2',
-        onComplete: () => txt.destroy(),
+        onComplete: () => {
+          txt.destroy();
+          this.activeFloatingTexts--;
+        },
       });
     };
 
